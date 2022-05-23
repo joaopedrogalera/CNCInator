@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>CNCINATOR</h2>
+<span style="color: #f00;">
+{% if 'running' in status %}
+Executando
+{% elif 'noFile' in status %}
+Selecione um arquivo
+{% elif 'fileError' in status %}
+Arquivo invalido
+{% elif 'runningErr' in status %}
+Já existe uma operação em execução
+{% elif 'noRunningErr' in status %}
+Nenhum programa em execução
+{% elif 'okFile' in status %}
+Arquivo pronto
+{% endif %}
+</span>
+{% if not status or 'noFile' in status or 'fileError' in status %}
+<p>Selecione um arquivo gcode:</p>
+<form action="/upload" method="post" enctype="multipart/form-data">
+  <input type="file" id="myFile" name="file">
+  <input type="submit">
+  <p></p>
+</form>
+{% endif %}
+<com-line>
+{% if 'okFile' in status or 'noRunningErr' in status %}
+<a href='/start'><button id="iniciar">Iniciar</button></a>
+{% endif %}
+{% if 'running' in status %}
+<a href='/pause-resume'><button id="parar">Pausar/Recomeçar</button></a>
+<a href='/abort'><button id="abortar">Abortar</button></a>
+{% endif %}
+</com-line>
+<!---
+<p><div id="tempo">
+Tempo Previsto:
+</div></p>
+-->
+<div id="status">
+Status: <span></span>
+</div>
+<script>
+//document.getElementById("tempo").style.display = "none";
+//document.getElementById("pronto").style.display = "none";
+
+//document.getElementById("iniciar").style.display = "none";
+//document.getElementById("parar").style.display = "none";
+//document.getElementById("recomecar").style.display = "none";
+//document.getElementById("abortar").style.display = "none";
+/*
+function pronto() {
+  var x = document.getElementById("pronto");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+
+function mostrartempo() {
+  var x = document.getElementById("tempo");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+  }
+
+  function mostrariniciar(){
+   var x = document.getElementById("iniciar");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
+
+function mostrarparar()
+  {
+   var x = document.getElementById("parar");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+  }
+
+function mostrarrecomecar(){
+   var x = document.getElementById("recomecar");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
+function mostrarabortar(){
+   var x = document.getElementById("abortar");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+*/
+var prevStatus = '';
+
+function updateStatus(){
+  let request = new XMLHttpRequest();
+  request.open('GET','/status');
+  request.responseType = 'json';
+  request.send();
+  request.onload = function(){
+    status = request.response['status'];
+    if(prevStatus==''){
+      prevStatus = status;
+    }
+    else if(status!=prevStatus&&(status=='End'||status=='Aborted')){
+      window.location.href = "/";
+    }
+    prevStatus = status;
+    let statusSpan = document.getElementById('status').getElementsByTagName('span')[0];
+    if(status=="Stop"){
+      statusSpan.innerHTML = "Pronto";
+    }
+    else if(status=="Run"){
+      statusSpan.innerHTML = "Executando";
+    }
+    else if(status=="Hold"){
+      statusSpan.innerHTML = "Pausado";
+    }
+    else if(status=="End"){
+      statusSpan.innerHTML = "Pronto";
+    }
+    else if(status=="Aborted"){
+      statusSpan.innerHTML = "Pronto";
+    }
+  }
+}
+const interval = setInterval(updateStatus, 500);
+</script>
+</body>
+</html>
