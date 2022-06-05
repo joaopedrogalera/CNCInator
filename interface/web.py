@@ -55,6 +55,23 @@ def start():
 
     os.execl(python2env,python2env,'stream.py',os.path.join('upload', 'upload.gcode'),serialPort)
 
+@app.route('/probe')
+def probe():
+    if os.path.isfile('status.txt'):
+        with open('status.txt', 'r') as statusFile:
+            status = statusFile.read().splitlines()[0]
+
+        if not (status == 'End' or status == 'Aborted'):
+            return flask.redirect('/?runningErr')
+
+    pid = os.fork()
+    if pid > 0:
+        with open('pid.txt','w') as pidFile:
+            pidFile.write(str(pid))
+        return flask.redirect('/?running')
+
+    os.execl(python2env,python2env,'stream.py','-p','probe.gcode',serialPort)
+
 @app.route('/pause-resume')
 def pauseResume():
     if not os.path.isfile('pid.txt'):

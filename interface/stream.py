@@ -73,6 +73,8 @@ parser.add_argument('-s','--settings',action='store_true', default=False,
         help='settings write mode')
 parser.add_argument('-c','--check',action='store_true', default=False,
         help='stream in check mode')
+parser.add_argument('-p','--probe',action='store_true', default=False,
+        help='stream in probe mode')
 args = parser.parse_args()
 
 # Periodic timer to query for status reports
@@ -131,6 +133,8 @@ settings_mode = False
 if args.settings : settings_mode = True
 check_mode = False
 if args.check : check_mode = True
+probe_mode = False
+if args.probe : probe_mode = True
 
 # Wake up grbl
 print "Initializing Grbl..."
@@ -241,7 +245,15 @@ else :
        out_temp = s.readline().strip()
        print(out_temp)
        if out_temp.find('Idle') >= 0:
-           idle = True
+           if not probe_mode:
+               idle = True
+           else:
+               s.write(b'G92Z0\n')
+               out_temp = s.readline().strip()
+               while out_temp.find('ok') < 0:
+                   pass
+               s.write(b'$J=G21G91Z10F5004\n')
+               probe_mode = False
 
 
 # Close file and serial port
