@@ -24,7 +24,7 @@ def upload():
         if file:
             file.save(os.path.join('upload', 'upload.gcode.tmp'))
             subprocess.run('echo -1 > check.txt', shell=True)
-            subprocess.run('./stream.py -c ./upload/upload.gcode '+serialPort, shell=True)
+            subprocess.run('./stream.py -c ./upload/upload.gcode.tmp '+serialPort, shell=True)
 
             with open('check.txt', 'r') as checkFile:
                 error_count = checkFile.readline()
