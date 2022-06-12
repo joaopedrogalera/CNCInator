@@ -51,15 +51,15 @@ Arquivo válido. Pronto para iniciar
 {% if not status or 'noFile' in status or 'fileError' in status  or 'noRunningErr' in status %}
 <div class="row">
   <div class="col-md-6">
-<p>Selecione um arquivo gcode:</p>
+<p>Selecione um arquivo gcode para fresar:</p>
 <form action="/upload" method="post" enctype="multipart/form-data">
   <input type="file" id="myFile" name="file" class="form-control">
   <button type="submit" class="btn btn-primary">Enviar</button>
 </form>
 </div>
 <div class="col-md-6 probe">
-<p>Ou faça um probe</p>
-<a href='/probe' class="btn btn-primary">Probe</a>
+<p>Ou meça a altura da placa</p>
+<a href='/probe' class="btn btn-primary">Medir altura da placa</a>
 </div>
 {% endif %}
 {% if 'okFile' in status %}
