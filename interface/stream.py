@@ -125,7 +125,13 @@ signal.signal(signal.SIGUSR1, pause_resume_handler)
 
 
 # Initialize
-s = serial.Serial(args.device_file,BAUD_RATE)
+try:
+    s = serial.Serial(args.device_file,BAUD_RATE)
+except:
+    if os.path.isfile('pid.txt'):
+        os.remove('pid.txt')
+    exit()
+
 f = args.gcode_file
 verbose = True
 if args.quiet : verbose = False
