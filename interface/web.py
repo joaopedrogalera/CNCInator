@@ -88,7 +88,7 @@ def abort():
     with open('pid.txt','r') as pidFile:
         pid = pidFile.read().splitlines()[0]
     os.kill(int(pid),signal.SIGTERM)
-    return flask.redirect('/?running')
+    return flask.redirect('/')
 
 @app.route('/status')
 def getStatus():

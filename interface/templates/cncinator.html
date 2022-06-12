@@ -1,47 +1,65 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>CNCINATOR</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
 <body>
-<h2>CNCINATOR</h2>
-<span style="color: #f00;">
-{% if 'running' in status %}
-Executando
-{% elif 'noFile' in status %}
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="#">CNCINATOR</a>
+  </div>
+</nav>
+<br />
+<div class="container">
+  <div id="status" class="alert alert-primary">
+  Status: <span></span>
+  </div>
+{% if 'noFile' in status %}
+<div class="alert alert-danger">
 Selecione um arquivo
+</div>
 {% elif 'fileError' in status %}
+<div class="alert alert-danger">
 Arquivo invalido
+</div>
 {% elif 'runningErr' in status %}
+<div class="alert alert-danger">
 Já existe uma operação em execução
+</div>
 {% elif 'noRunningErr' in status %}
+<div class="alert alert-danger">
 Nenhum programa em execução
+</div>
 {% elif 'okFile' in status %}
-Arquivo pronto
+<div class="alert alert-success">
+Arquivo válido. Pronto para iniciar
+</div>
 {% endif %}
-</span>
-{% if not status or 'noFile' in status or 'fileError' in status %}
+{% if not status or 'noFile' in status or 'fileError' in status  or 'noRunningErr' in status %}
 <p>Selecione um arquivo gcode:</p>
 <form action="/upload" method="post" enctype="multipart/form-data">
-  <input type="file" id="myFile" name="file">
-  <input type="submit">
+  <input type="file" id="myFile" name="file" class="form-control">
+  <button type="submit" class="btn btn-primary">Enviar</button>
   <p></p>
 </form>
-<a href='/probe'><button id="probe">Probe</button></a>
+<p>Ou faça um probe</p>
+<a href='/probe' class="btn btn-primary">Probe</a>
 {% endif %}
-<com-line>
-{% if 'okFile' in status or 'noRunningErr' in status %}
-<a href='/start'><button id="iniciar">Iniciar</button></a>
+{% if 'okFile' in status %}
+<a href='/start' class="btn btn-success">Iniciar</a>
 {% endif %}
 {% if 'running' in status %}
-<a href='/pause-resume'><button id="parar">Pausar/Recomeçar</button></a>
-<a href='/abort'><button id="abortar">Abortar</button></a>
+<a href='/pause-resume' class="btn btn-warning">Pausar/Recomeçar</a>
+<a href='/abort' class="btn btn-danger">Abortar</a>
 {% endif %}
-</com-line>
 <!---
 <p><div id="tempo">
 Tempo Previsto:
 </div></p>
 -->
-<div id="status">
-Status: <span></span>
+<br />
+<br />
 </div>
 <script>
 //document.getElementById("tempo").style.display = "none";
