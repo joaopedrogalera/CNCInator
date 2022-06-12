@@ -2,7 +2,19 @@
 <html>
 <head>
   <title>CNCINATOR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <style type="text/css">
+  div.probe{
+    margin-top: 15px;
+  }
+  @media screen and (min-width: 768px){
+    div.probe{
+      margin-top: 0;
+      border-left: solid 1px #ddd;
+    }
+  }
+  </style>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
@@ -37,14 +49,18 @@ Arquivo válido. Pronto para iniciar
 </div>
 {% endif %}
 {% if not status or 'noFile' in status or 'fileError' in status  or 'noRunningErr' in status %}
+<div class="row">
+  <div class="col-md-6">
 <p>Selecione um arquivo gcode:</p>
 <form action="/upload" method="post" enctype="multipart/form-data">
   <input type="file" id="myFile" name="file" class="form-control">
   <button type="submit" class="btn btn-primary">Enviar</button>
-  <p></p>
 </form>
+</div>
+<div class="col-md-6 probe">
 <p>Ou faça um probe</p>
 <a href='/probe' class="btn btn-primary">Probe</a>
+</div>
 {% endif %}
 {% if 'okFile' in status %}
 <a href='/start' class="btn btn-success">Iniciar</a>
