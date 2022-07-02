@@ -254,11 +254,11 @@ else :
            if not probe_mode:
                idle = True
            else:
-               s.write(b'G92Z0\n')
+               s.write(b'G10L20P1Z0.0\n')
                out_temp = s.readline().strip()
                while out_temp.find('ok') < 0:
                    pass
-               s.write(b'$J=G21G91Z10F5004\n')
+               s.write(b'G91G21G0Z10.0\n')
                probe_mode = False
 
 
