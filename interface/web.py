@@ -4,7 +4,7 @@ import subprocess
 import signal
 
 app = flask.Flask(__name__)
-serialPort = '/dev/ttyUSB0'
+serialPort = '/dev/ttyVUSB0'
 python2env = '../../env2/bin/python'
 
 @app.route('/')

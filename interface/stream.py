@@ -87,6 +87,22 @@ def periodic_timer() :
       send_status_query()
       time.sleep(REPORT_INTERVAL)
 
+def waitIdle():
+    idle = False
+    while not idle:
+        time.sleep(0.5)
+        s.write('?')
+        out_temp = s.readline().strip()
+        if out_temp.find('Idle') >= 0:
+            idle = True
+
+def goHome():
+    waitIdle()
+    s.write(b'G90G21G0Z5\n')
+    waitIdle()
+    s.write(b'G90G21G0X0Y0\n')
+    waitIdle()
+
 def end_process_handler(signum, frame):
     s.write('!')
     hold = False
@@ -101,6 +117,7 @@ def end_process_handler(signum, frame):
     time.sleep(2)
     s.write(chr(24))
     time.sleep(2)
+    goHome()
     f.close()
     s.close()
     os.system('echo Aborted > status.txt')
@@ -142,6 +159,7 @@ if args.check : check_mode = True
 probe_mode = False
 if args.probe : probe_mode = True
 
+home = True
 # Wake up grbl
 print "Initializing Grbl..."
 s.write("\r\n\r\n")
@@ -149,6 +167,8 @@ s.write("\r\n\r\n")
 # Wait for grbl to initialize and flush startup text in serial input
 time.sleep(2)
 s.flushInput()
+s.write(chr(24))
+time.sleep(2)
 
 if check_mode :
     print "Enabling Grbl Check-Mode: SND: [$C]",
@@ -260,9 +280,12 @@ else :
                    pass
                s.write(b'G91G21G0Z10.0\n')
                probe_mode = False
+               home = False
 
 
 # Close file and serial port
+if not check_mode and home:
+    goHome()
 f.close()
 s.close()
 os.system('echo End > status.txt')
